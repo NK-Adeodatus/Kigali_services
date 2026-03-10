@@ -1,21 +1,9 @@
 import 'dart:math';
-import 'dart:convert';
 import 'dart:developer' as developer;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EmailOtpService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  String? _safeEnv(String key) {
-    try {
-      return dotenv.env[key];
-    } catch (_) {
-      // dotenv not initialized (common on web when no asset is bundled)
-      return null;
-    }
-  }
 
   String _generateOtp() {
     return (100000 + Random().nextInt(900000)).toString();
@@ -32,8 +20,7 @@ class EmailOtpService {
       'verified': false,
     });
 
-    // Send email using Firebase Functions or third-party service
-    // For now, we'll simulate by storing in a collection the user can check
+    // Queue an email document; a Cloud Function is responsible for delivery.
     await _firestore.collection('otp_emails').add({
       'to': email,
       'subject': 'Kigali City Services - Verification Code',
@@ -44,41 +31,10 @@ class EmailOtpService {
       ''',
       'createdAt': FieldValue.serverTimestamp(),
     });
-
-    // Send real email via EmailJS (optional)
-    final serviceId = _safeEnv('EMAILJS_SERVICE_ID');
-    final templateId = _safeEnv('EMAILJS_TEMPLATE_ID');
-    final publicKey = _safeEnv('EMAILJS_PUBLIC_KEY');
-    if (serviceId == null ||
-        serviceId.isEmpty ||
-        templateId == null ||
-        templateId.isEmpty ||
-        publicKey == null ||
-        publicKey.isEmpty) {
-      developer.log(
-        'EmailJS not configured; OTP stored in Firestore only.',
-        name: 'EmailOtpService',
-      );
-      return;
-    }
-
-    final response = await http.post(
-      Uri.parse('https://api.emailjs.com/api/v1.0/email/send'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'service_id': serviceId,
-        'template_id': templateId,
-        'user_id': publicKey,
-        'template_params': {
-          'email': email,
-          'otp_code': otp,
-        },
-      }),
+    developer.log(
+      'OTP email queued in Firestore (otp_emails).',
+      name: 'EmailOtpService',
     );
-    developer.log('EmailJS Response: ${response.statusCode} - ${response.body}');
-    if (response.statusCode != 200) {
-      throw Exception('Failed to send OTP email: ${response.body}');
-    }
   }
 
   Future<bool> verifyOtp(String email, String enteredOtp) async {

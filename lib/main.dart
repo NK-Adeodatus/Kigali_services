@@ -105,6 +105,7 @@ class MyApp extends StatelessWidget {
           appBarTheme: AppBarTheme(
             backgroundColor: kSurface,
             elevation: 0,
+            centerTitle: true,
             titleTextStyle: GoogleFonts.playfairDisplay(
               fontSize: 20,
               fontWeight: FontWeight.w700,

@@ -86,15 +86,17 @@ class _GlowPainter extends CustomPainter {
 }
 
 // Theme colors
-const kBg = Color(0xFF0D1117);
-const kSurface = Color(0xFF161B22);
-const kSurface2 = Color(0xFF1C2230);
-const kGreen = Color(0xFF2D6A4F);
-const kGreenLight = Color(0xFF52B788);
-const kTerra = Color(0xFFC1440E);
-const kGold = Color(0xFFD4A853);
-const kCream = Color(0xFFE8E0D4);
-const kMuted = Color(0xFF8B8680);
+// Keep the overall background the same, but adjust surfaces and accents
+// so the app has a distinct visual style.
+const kBg = Color(0xFF0D1117); // unchanged scaffold background
+const kSurface = Color(0xFF11151F); // slightly cooler, more contrasty cards
+const kSurface2 = Color(0xFF1A2130); // secondary surface, a touch brighter
+const kGreen = Color(0xFF1E8467); // deeper teal-green primary
+const kGreenLight = Color(0xFF5ED1A7); // lighter mint accent
+const kTerra = Color(0xFFCC5C3B); // warmer terra accent
+const kGold = Color(0xFFE0B15C); // softer gold
+const kCream = Color(0xFFF1E9DC); // lighter, warmer text on dark
+const kMuted = Color(0xFF9A9690); // slightly brighter muted text
 
 // Category color lookup
 Color kCategoryColor(String category) {
@@ -131,14 +133,18 @@ Widget kGradientButton(String label, VoidCallback? onPressed, {IconData? icon}) 
     height: 52,
     child: DecoratedBox(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [kGreen, kGreenLight]),
-        borderRadius: BorderRadius.circular(12),
+        gradient: const LinearGradient(
+          colors: [kGreen, kGreenLight],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: kGreen.withValues(alpha: 0.35),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          )
+            color: kGreen.withValues(alpha: 0.4),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
         ],
       ),
       child: ElevatedButton.icon(
@@ -147,7 +153,7 @@ Widget kGradientButton(String label, VoidCallback? onPressed, {IconData? icon}) 
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
           ),
         ),
         icon: icon != null
@@ -159,6 +165,7 @@ Widget kGradientButton(String label, VoidCallback? onPressed, {IconData? icon}) 
             color: Colors.white,
             fontSize: 15,
             fontWeight: FontWeight.w600,
+            letterSpacing: 0.4,
           ),
         ),
       ),
@@ -171,27 +178,28 @@ Widget kCategoryBadge(String category) {
   final color = kCategoryColor(category);
   final icon = kCategoryIcon(category);
   return Container(
-    width: 46,
-    height: 46,
+    width: 40,
+    height: 40,
     decoration: BoxDecoration(
-      color: color.withValues(alpha: 0.15),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: color.withValues(alpha: 0.3)),
+      color: color.withValues(alpha: 0.16),
+      borderRadius: BorderRadius.circular(999),
+      border: Border.all(color: color.withValues(alpha: 0.4), width: 1.2),
     ),
-    child: Icon(icon, color: color, size: 20),
+    child: Icon(icon, color: color, size: 18),
   );
 }
 
 // Shimmer placeholder card
 Widget kShimmerCard() => Shimmer.fromColors(
       baseColor: kSurface,
-      highlightColor: kSurface2,
+      highlightColor: kSurface2.withValues(alpha: 0.9),
       child: Container(
-        height: 90,
+        height: 96,
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: kSurface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.white12),
         ),
       ),
     );
