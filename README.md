@@ -5,7 +5,7 @@ It helps users find public services and popular spots—such as hospitals, polic
 
 ---
 
-## Core capabilities
+## Core capabilities of the app
 
 ### Authentication
 - Email/password sign up and login using **Firebase Authentication**
@@ -30,47 +30,36 @@ It helps users find public services and popular spots—such as hospitals, polic
 - Each listing is shown as a marker using its stored coordinates
 - A “Directions” action opens navigation (via `url_launcher`) to the selected location
 
-### App navigation
-The bottom navigation bar exposes four main areas:
-
-| Tab | Screen           | Purpose                                      |
-|-----|------------------|----------------------------------------------|
-| 1   | Directory        | Browse all listings with search + filters   |
-| 2   | My Listings      | Manage the listings created by the user     |
-| 3   | Map View         | See all places plotted on a city map        |
-| 4   | Settings         | View basic profile info and toggle options  |
-
----
 
 ## Project structure
 
 ```text
 lib/
 ├── models/
-│   ├── listing_model.dart     # ListingModel with Firestore (de)serialization
-│   └── user_model.dart        # UserModel for user profile documents
+│   ├── listing_model.dart     
+│   └── user_model.dart        
 ├── providers/
-│   ├── auth_provider.dart     # Auth state, user profile, and session handling
-│   └── listings_provider.dart # Listing CRUD, search text, and category filter
+│   ├── auth_provider.dart    
+│   └── listings_provider.dart
 ├── screens/
-│   ├── home_screen.dart           # Root layout with BottomNavigationBar
-│   ├── directory_screen.dart      # Main directory list
-│   ├── my_listings_screen.dart    # Listings owned by the signed‑in user
-│   ├── map_view_screen.dart       # Full-screen map with markers
-│   ├── listing_detail_screen.dart # Detail view + embedded map + actions
-│   ├── add_listing_screen.dart    # Form to create a new listing
-│   ├── edit_listing_screen.dart   # Form to update an existing listing
-│   ├── settings_screen.dart       # Simple settings / profile area
+│   ├── home_screen.dart           
+│   ├── directory_screen.dart     
+│   ├── my_listings_screen.dart    
+│   ├── map_view_screen.dart      
+│   ├── listing_detail_screen.dart 
+│   ├── add_listing_screen.dart   
+│   ├── edit_listing_screen.dart  
+│   ├── settings_screen.dart     
 │   ├── login_screen.dart
 │   ├── signup_screen.dart
 │   └── otp_verification_screen.dart (present but not required in current flow)
 ├── services/
-│   ├── auth_service.dart          # Thin wrapper around Firebase Auth APIs
-│   ├── firestore_service.dart     # Centralized Firestore read/write logic
-│   └── email_otp_service.dart     # OTP generation + Firestore storage
+│   ├── auth_service.dart         
+│   ├── firestore_service.dart     
+│   └── email_otp_service.dart    
 ├── widgets/
-│   └── ui_helpers.dart            # Colors, gradients, badges, and shared UI pieces
-└── main.dart                      # Entry point, providers, and global ThemeData
+│   └── ui_helpers.dart            
+└── main.dart                      
 ```
 
 ---
@@ -131,22 +120,7 @@ createdAt   : timestamp
 updatedAt   : timestamp (optional)
 ```
 
-### `email_otps/{email}` (optional if you disable OTP)
-```text
-otp       : string   // 6-digit code
-createdAt : timestamp
-expiresAt : timestamp
-verified  : boolean
-```
 
-### `otp_emails/{docId}`
-```text
-to        : string   // recipient email
-subject   : string
-html      : string   // OTP email body
-createdAt : timestamp
-status    : string   // e.g. "queued", "sent", "error" (if using backend sender)
-```
 
 The OTP collections are only needed if you enforce an OTP verification step.  
 In the current configuration you can treat them as optional, or use them for manual testing.
@@ -182,28 +156,6 @@ flutter run -d chrome
 flutter run -d android
 ```
 
-For development, you can verify OTP codes directly from Firestore if you choose to keep that flow enabled.  
-In the simplified flow, users can sign in immediately after registration without entering an additional code.
-
----
-
-## Technology stack
-
-| Package            | Role                                                      |
-|--------------------|-----------------------------------------------------------|
-| `firebase_auth`    | Email/password authentication                            |
-| `cloud_firestore`  | Real-time, document-based backend                        |
-| `provider`         | Lightweight state management                             |
-| `flutter_map`      | Map rendering using OpenStreetMap tiles                  |
-| `latlong2`         | Coordinate representation for `flutter_map`              |
-| `url_launcher`     | Launches external apps (Maps, phone dialer)              |
-| `google_fonts`     | Custom typography for headings and body text             |
-| `flutter_animate`  | Subtle entrance and motion animations                    |
-| `shimmer`          | Skeleton loading effects for lists                       |
-| `flutter_dotenv`   | (Optional) environment variable loading for secrets      |
-| `http`             | HTTP client (available for backends/Email integrations)  |
-
----
 
 ## Platforms
 
