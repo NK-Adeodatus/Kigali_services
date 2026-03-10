@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
@@ -11,7 +12,15 @@ import 'widgets/ui_helpers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  // On Flutter Web, `flutter_dotenv` loads from bundled assets. Since `.env`
+  // is gitignored and optional in this repo, we skip loading it on web.
+  if (!kIsWeb) {
+    try {
+      await dotenv.load(fileName: ".env");
+    } catch (_) {
+      // .env is optional for local/dev; continue without it.
+    }
+  }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
